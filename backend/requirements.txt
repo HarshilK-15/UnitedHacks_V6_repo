@@ -1,0 +1,7 @@
+In your venv (must be named venv) install:
+fastapi
+uvicorn[standard]
+sqlmodel
+python-dotenv
+from google import genai (genai is better)
+requests
