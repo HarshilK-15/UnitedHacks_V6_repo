@@ -1,0 +1,215 @@
+import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { api } from '../api'
+import './DecisionCard.css'
+
+function DecisionCard({ decision, currentUserId, onVote }) {
+  const voteCounts = decision.vote_counts || { option_a: 0, option_b: 0 }
+  const user = decision.user || {}
+  const totalVotes = voteCounts.option_a + voteCounts.option_b
+  const optionAPercentage = totalVotes > 0 ? Math.round((voteCounts.option_a / totalVotes) * 100) : 0
+  const optionBPercentage = totalVotes > 0 ? Math.round((voteCounts.option_b / totalVotes) * 100) : 0
+
+  const [comments, setComments] = useState([])
+  const [newComment, setNewComment] = useState('')
+  const [showComments, setShowComments] = useState(false)
+  const [loadingComments, setLoadingComments] = useState(false)
+  const [postingComment, setPostingComment] = useState(false)
+
+  const loadComments = async () => {
+    if (comments.length > 0) return // Already loaded
+
+    setLoadingComments(true)
+    try {
+      const response = await api.getComments(decision.id)
+      setComments(response.data)
+    } catch (err) {
+      console.error('Failed to load comments:', err)
+    } finally {
+      setLoadingComments(false)
+    }
+  }
+
+  const handleShowComments = () => {
+    setShowComments(!showComments)
+    if (!showComments && comments.length === 0) {
+      loadComments()
+    }
+  }
+
+  const handlePostComment = async (e) => {
+    e.preventDefault()
+    if (!newComment.trim()) return
+
+    setPostingComment(true)
+    try {
+      const response = await api.createComment({
+        decision_id: decision.id,
+        content: newComment.trim()
+      })
+      setComments([response.data, ...comments])
+      setNewComment('')
+    } catch (err) {
+      console.error('Failed to post comment:', err)
+      alert('Failed to post comment')
+    } finally {
+      setPostingComment(false)
+    }
+  }
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await api.deleteComment(commentId)
+      setComments(comments.filter(c => c.id !== commentId))
+    } catch (err) {
+      console.error('Failed to delete comment:', err)
+      alert('Failed to delete comment')
+    }
+  }
+
+  return (
+    <div className="decision-card">
+      <div className="decision-header">
+        <Link to={`/profile/${user.id || decision.user_id}`} className="user-link">
+          <div className="user-avatar-small">
+            {user.username?.charAt(0).toUpperCase() || 'U'}
+          </div>
+          <span className="username">{user.username || 'Unknown'}</span>
+        </Link>
+        <span className="decision-date">
+          {new Date(decision.created_at).toLocaleDateString()}
+        </span>
+      </div>
+
+      <div className="decision-content">
+        <p>{decision.content}</p>
+      </div>
+
+      <div className="decision-options">
+        <div className="option option-a">
+          <span className="option-label">A:</span>
+          <span className="option-text">{decision.option_a}</span>
+        </div>
+        <div className="option option-b">
+          <span className="option-label">B:</span>
+          <span className="option-text">{decision.option_b}</span>
+        </div>
+      </div>
+
+      <div className="decision-votes">
+        <div className="vote-stats">
+          <span className="vote-stat">{totalVotes} votes</span>
+        </div>
+        {totalVotes > 0 && (
+          <div className="vote-bars">
+            <div className="vote-bar-container">
+              <div
+                className="vote-bar vote-bar-a"
+                style={{ width: `${optionAPercentage}%` }}
+              >
+                <span>{optionAPercentage}%</span>
+              </div>
+            </div>
+            <div className="vote-bar-container">
+              <div
+                className="vote-bar vote-bar-b"
+                style={{ width: `${optionBPercentage}%` }}
+              >
+                <span>{optionBPercentage}%</span>
+              </div>
+            </div>
+          </div>
+        )}
+        <div className="vote-buttons">
+          <button
+            className="vote-btn vote-a"
+            onClick={() => onVote(decision.id, 'option_a')}
+          >
+            {decision.option_a} ({voteCounts.option_a})
+          </button>
+          <button
+            className="vote-btn vote-b"
+            onClick={() => onVote(decision.id, 'option_b')}
+          >
+            {decision.option_b} ({voteCounts.option_b})
+          </button>
+        </div>
+      </div>
+
+      <div className="decision-comments">
+        <button
+          className="btn-link"
+          onClick={handleShowComments}
+        >
+          {showComments ? 'Hide' : 'Show'} Comments ({comments.length})
+        </button>
+
+        {showComments && (
+          <div className="comments-section">
+            {currentUserId && (
+              <form onSubmit={handlePostComment} className="comment-form">
+                <textarea
+                  className="input-field"
+                  placeholder="Add a comment..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  disabled={postingComment}
+                  rows={2}
+                />
+                <button
+                  type="submit"
+                  className="btn-primary btn-small"
+                  disabled={postingComment || !newComment.trim()}
+                >
+                  {postingComment ? 'Posting...' : 'Post'}
+                </button>
+              </form>
+            )}
+
+            {loadingComments ? (
+              <div className="loading-comments">
+                <div className="spinner-small"></div>
+                Loading comments...
+              </div>
+            ) : (
+              <div className="comments-list">
+                {comments.length === 0 ? (
+                  <p className="no-comments">No comments yet.</p>
+                ) : (
+                  comments.map(comment => (
+                    <div key={comment.id} className="comment">
+                      <div className="comment-header">
+                        <Link to={`/profile/${comment.user.id}`} className="user-link">
+                          <div className="user-avatar-small">
+                            {comment.user.username?.charAt(0).toUpperCase() || 'U'}
+                          </div>
+                          <span className="username">{comment.user.username}</span>
+                        </Link>
+                        <span className="comment-date">
+                          {new Date(comment.created_at).toLocaleDateString()}
+                        </span>
+                        {currentUserId === comment.user_id && (
+                          <button
+                            className="btn-link btn-small"
+                            onClick={() => handleDeleteComment(comment.id)}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </div>
+                      <div className="comment-content">
+                        <p>{comment.content}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default DecisionCard
