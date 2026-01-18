@@ -1,0 +1,9 @@
+.following-page {
+  width: 100%;
+}
+
+.decisions-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

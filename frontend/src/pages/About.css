@@ -1,0 +1,68 @@
+.about-page {
+  width: 100%;
+}
+
+.about-content {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.about-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+}
+
+.about-description {
+  font-size: 18px;
+  margin-bottom: 32px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.8;
+}
+
+.features-section {
+  text-align: left;
+  margin-bottom: 32px;
+}
+
+.features-section h2 {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+}
+
+.features-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  position: relative;
+  padding-left: 24px;
+}
+
+.features-list li:before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #FF6B6B;
+  font-weight: 700;
+}
+
+.features-list li:last-child {
+  border-bottom: none;
+}
+
+.info-section {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-section p {
+  margin-bottom: 8px;
+}

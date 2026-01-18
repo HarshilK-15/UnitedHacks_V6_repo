@@ -22,17 +22,17 @@ async def create_vote(vote: Vote, session: Session = Depends(get_session)):
 
 @router.get("/votes/{decision_id}")
 async def get_vote_counts(decision_id: int, session: Session = Depends(get_session)):
-    # Get counts for do_it and dont_do_it
-    do_it_count = session.exec(
-        select(func.count(Vote.id)).where(Vote.decision_id == decision_id, Vote.choice == "do_it")
+    # Get counts for option_a and option_b
+    option_a_count = session.exec(
+        select(func.count(Vote.id)).where(Vote.decision_id == decision_id, Vote.choice == "option_a")
     ).first()
 
-    dont_do_it_count = session.exec(
-        select(func.count(Vote.id)).where(Vote.decision_id == decision_id, Vote.choice == "dont_do_it")
+    option_b_count = session.exec(
+        select(func.count(Vote.id)).where(Vote.decision_id == decision_id, Vote.choice == "option_b")
     ).first()
 
     return {
         "decision_id": decision_id,
-        "do_it": do_it_count or 0,
-        "dont_do_it": dont_do_it_count or 0
+        "option_a": option_a_count or 0,
+        "option_b": option_b_count or 0
     }

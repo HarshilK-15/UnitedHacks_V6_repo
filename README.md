@@ -13,7 +13,7 @@ A modern, responsive PWA where users post binary choices, vote on others' decisi
 
 ## Tech Stack
 
-- **Backend**: FastAPI, SQLModel, SQLite, Google Gemini AI
+- **Backend**: FastAPI, SQLModel, PostgreSQL/SQLite, Google Gemini AI
 - **Frontend**: React, Vite, PWA
 - **Deployment**: Railway.app
 
@@ -38,15 +38,49 @@ npm run dev
 
 ## Deployment
 
-### Backend (Railway.app)
-1. Connect your GitHub repo to Railway
-2. Set environment variables:
-   - `DATABASE_URL=sqlite:///./doomscroll.db`
-   - `GEMINI_API_KEY=your_key_here`
-3. Deploy - Railway will use `railway.json` config
+### Full-Stack Deployment on Railway.app
 
-### Frontend
-The frontend can be deployed to any static hosting service (Vercel, Netlify, etc.)
+1. **Connect Repository**: Connect your GitHub repo to Railway
+
+2. **Add PostgreSQL Database**:
+   - In Railway dashboard, click "Add Service" → "Database" → "PostgreSQL"
+   - Note the connection URL provided by Railway
+
+3. **Set Environment Variables** in Railway dashboard:
+   ```
+   DATABASE_URL=postgresql://postgres:password@containers-us-west-1.railway.app:PORT/railway
+   GEMINI_API_KEY=your_actual_gemini_api_key
+   ```
+
+4. **Deploy**: Railway will automatically:
+   - Install dependencies using Nixpacks
+   - Build the frontend (`npm run build`)
+   - Start the backend server
+   - Serve both frontend (static files) and API
+
+5. **Database Migration**: The app automatically creates tables and runs migrations on startup
+
+### Alternative: Separate Deployments
+
+**Backend Only (Railway)**:
+- Use the configuration as above
+- API will be available at `your-railway-url.com/api`
+
+**Frontend Only (Vercel/Netlify)**:
+```bash
+cd frontend
+npm run build
+# Deploy dist/ folder to your hosting service
+```
+
+### Environment Variables Reference
+
+**Required**:
+- `DATABASE_URL`: PostgreSQL connection string (Railway provides this)
+- `GEMINI_API_KEY`: Your Google Gemini API key
+
+**Optional**:
+- `PORT`: Railway sets this automatically (default: 8000)
 
 ## API Endpoints
 

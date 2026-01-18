@@ -1,0 +1,72 @@
+.leaderboard-page {
+  width: 100%;
+}
+
+.leaderboard-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+  transition: all 0.2s;
+}
+
+.leaderboard-item:hover {
+  border-color: rgba(255, 107, 107, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateX(4px);
+}
+
+.leaderboard-item.current-user {
+  border-color: rgba(255, 107, 107, 0.5);
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.rank-badge {
+  font-size: 24px;
+  width: 40px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-username {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.you-badge {
+  color: #FF6B6B;
+  font-size: 12px;
+}
+
+.user-stats {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+.rank-number {
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 18px;
+}
